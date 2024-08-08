@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simplenotesapp.ui.theme.SimpleNotesAppTheme
 
@@ -49,6 +53,7 @@ fun SimpleNotesApp() {
         val notes = viewModel.notes.collectAsState().value
 //        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
         var text by remember { mutableStateOf("")}
+        val openAlertDialog = remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -56,17 +61,21 @@ fun SimpleNotesApp() {
                 .padding(32.dp)
         ) {
             notes.forEach { note ->
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(
                         text = note,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        fontSize = 24.sp
                     )
                     Icon(
                         Icons.Filled.Clear,
                         contentDescription = "Remove",
                         modifier = Modifier
                             .clickable {
-                                viewModel.removeNote(note)
+//                                viewModel.removeNote(note)
+                                openAlertDialog.value = true
                             }
                     )
                 }
@@ -93,6 +102,26 @@ fun SimpleNotesApp() {
                 }
             ) {
                 Text(text = "Add Note")
+            }
+        }
+
+        when {
+            openAlertDialog.value -> {
+                AlertDialog(
+                    onDismissRequest = { /*TODO*/ },
+                    confirmButton = {
+                        TextButton(
+                            onClick = { /*TODO*/ }) {
+                            Text(text = "Delete")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { /*TODO*/ }) {
+                            Text(text = "Cancel")
+                        }
+                    }
+                )
             }
         }
     }
