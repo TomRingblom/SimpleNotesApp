@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -110,7 +111,10 @@ fun SimpleNotesApp() {
         when {
             openAlertDialog.value -> {
                 AlertDialog(
-                    title = { Text(text = "Delete Note") },
+                    icon = { Icon(Icons.Filled.Warning, contentDescription = null)},
+                    title = {
+                        Text(text = "Delete Note")
+                    },
                     text = {
                         Text(text = "Are you sure you want to delete this note?")
                     },
