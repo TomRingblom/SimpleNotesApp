@@ -22,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +55,7 @@ fun SimpleNotesApp() {
 //        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
         var text by remember { mutableStateOf("")}
         val openAlertDialog = remember { mutableStateOf(false) }
+        var noteToDelete = remember { mutableIntStateOf(0) }
 
         Column(
             modifier = Modifier
@@ -65,7 +67,7 @@ fun SimpleNotesApp() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = note,
+                        text = note.text,
                         modifier = Modifier.weight(1f),
                         fontSize = 24.sp
                     )
@@ -74,7 +76,7 @@ fun SimpleNotesApp() {
                         contentDescription = "Remove",
                         modifier = Modifier
                             .clickable {
-//                                viewModel.removeNote(note)
+                                noteToDelete.value = note.id
                                 openAlertDialog.value = true
                             }
                     )
@@ -108,16 +110,23 @@ fun SimpleNotesApp() {
         when {
             openAlertDialog.value -> {
                 AlertDialog(
-                    onDismissRequest = { /*TODO*/ },
+                    title = { Text(text = "Delete Note") },
+                    text = {
+                        Text(text = "Are you sure you want to delete this note?")
+                    },
+                    onDismissRequest = { openAlertDialog.value = false },
                     confirmButton = {
                         TextButton(
-                            onClick = { /*TODO*/ }) {
+                            onClick = {
+                                openAlertDialog.value = false
+                                viewModel.removeNote(noteToDelete.value)
+                            }) {
                             Text(text = "Delete")
                         }
                     },
                     dismissButton = {
                         TextButton(
-                            onClick = { /*TODO*/ }) {
+                            onClick = { openAlertDialog.value = false }) {
                             Text(text = "Cancel")
                         }
                     }
