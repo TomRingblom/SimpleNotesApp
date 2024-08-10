@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,7 +79,7 @@ fun SimpleNotesApp() {
                     )
                     Icon(
                         Icons.Filled.Clear,
-                        contentDescription = "Remove",
+                        contentDescription = stringResource(R.string.remove),
                         modifier = Modifier
                             .clickable {
                                 noteToDelete.value = note.id
@@ -96,7 +97,7 @@ fun SimpleNotesApp() {
             TextField(
                 value = text,
                 onValueChange = { text = it},
-                label = { Text("Add a note")},
+                label = { Text(stringResource(R.string.add_a_note))},
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -131,10 +132,10 @@ fun SimpleNotesApp() {
                 AlertDialog(
                     icon = { Icon(Icons.Filled.Warning, contentDescription = null)},
                     title = {
-                        Text(text = "Delete Note")
+                        Text(stringResource(R.string.delete_note))
                     },
                     text = {
-                        Text(text = "Are you sure you want to delete this note?")
+                        Text(stringResource(R.string.alert_dialog_delete_note_question))
                     },
                     onDismissRequest = { openAlertDialog.value = false },
                     confirmButton = {
@@ -143,13 +144,13 @@ fun SimpleNotesApp() {
                                 openAlertDialog.value = false
                                 viewModel.removeNote(noteToDelete.value)
                             }) {
-                            Text(text = "Delete")
+                            Text(stringResource(R.string.delete))
                         }
                     },
                     dismissButton = {
                         TextButton(
                             onClick = { openAlertDialog.value = false }) {
-                            Text(text = "Cancel")
+                            Text(stringResource(R.string.cancel))
                         }
                     }
                 )
