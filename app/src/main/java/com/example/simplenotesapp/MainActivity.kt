@@ -59,7 +59,6 @@ fun SimpleNotesApp() {
         val viewModel: NotesViewModel = viewModel()
         val notes = viewModel.notes.collectAsState().value
 //        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
-        var text by remember { mutableStateOf("")}
         val openAlertDialog = remember { mutableStateOf(false) }
         var noteToDelete = remember { mutableIntStateOf(0) }
 
@@ -89,44 +88,7 @@ fun SimpleNotesApp() {
                 }
             }
         }
-
-        Column(modifier = Modifier
-            .align(Alignment.Center)
-            .padding(32.dp)
-        ) {
-            TextField(
-                value = text,
-                onValueChange = { text = it},
-                label = { Text(stringResource(R.string.add_a_note))},
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        if(text.isNotEmpty()) {
-                            addNoteToViewModel(viewModel, text)
-                            text = ""
-                        }
-                    }
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(
-                onClick = {
-                    if(text.isNotEmpty()) {
-                        addNoteToViewModel(viewModel, text)
-                        text = ""
-                    }
-                }
-            ) {
-                Text(text = "Add Note")
-            }
-        }
-
+        AddNote(viewModel, Modifier.align(Alignment.Center))
         when {
             openAlertDialog.value -> {
                 AlertDialog(
@@ -163,10 +125,45 @@ private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
     viewModel.addNote(note)
 }
 
-//@Composable
-//fun AddNote(modifier: Modifier = Modifier) {
-//
-//}
+@Composable
+fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
+    var text by remember { mutableStateOf("")}
+    Column(modifier = modifier
+        .padding(32.dp)
+    ) {
+        TextField(
+            value = text,
+            onValueChange = { text = it},
+            label = { Text(stringResource(R.string.add_a_note))},
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if(text.isNotEmpty()) {
+                        addNoteToViewModel(viewModel, text)
+                        text = ""
+                    }
+                }
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Button(
+            onClick = {
+                if(text.isNotEmpty()) {
+                    addNoteToViewModel(viewModel, text)
+                    text = ""
+                }
+            }
+        ) {
+            Text(stringResource(R.string.add_note))
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
