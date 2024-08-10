@@ -25,7 +25,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.simplenotesapp.model.Note
 import com.example.simplenotesapp.ui.theme.SimpleNotesAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -58,39 +59,20 @@ fun SimpleNotesApp() {
     Box(modifier = Modifier.fillMaxSize()) {
         val viewModel: NotesViewModel = viewModel()
         val notes = viewModel.notes.collectAsState().value
+        val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
 //        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
-        val openAlertDialog = remember { mutableStateOf(false) }
-        var noteToDelete = remember { mutableIntStateOf(0) }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(32.dp)
-        ) {
-            notes.forEach { note ->
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = note.text,
-                        modifier = Modifier.weight(1f),
-                        fontSize = 24.sp
-                    )
-                    Icon(
-                        Icons.Filled.Clear,
-                        contentDescription = stringResource(R.string.remove),
-                        modifier = Modifier
-                            .clickable {
-                                noteToDelete.value = note.id
-                                openAlertDialog.value = true
-                            }
-                    )
-                }
-            }
-        }
-        AddNote(viewModel, Modifier.align(Alignment.Center))
+        NoteList(
+            viewModel = viewModel,
+            modifier = Modifier.align(Alignment.TopCenter),
+            notes = notes
+        )
+        AddNote(
+            viewModel = viewModel,
+            modifier = Modifier.align(Alignment.Center)
+        )
         when {
-            openAlertDialog.value -> {
+            openAlertDialog -> {
                 AlertDialog(
                     icon = { Icon(Icons.Filled.Warning, contentDescription = null)},
                     title = {
@@ -99,19 +81,19 @@ fun SimpleNotesApp() {
                     text = {
                         Text(stringResource(R.string.alert_dialog_delete_note_question))
                     },
-                    onDismissRequest = { openAlertDialog.value = false },
+                    onDismissRequest = { viewModel.updateAlertDialog(false) },
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                openAlertDialog.value = false
-                                viewModel.removeNote(noteToDelete.value)
+                                viewModel.updateAlertDialog(false)
+                                viewModel.removeNote(viewModel.noteToDelete)
                             }) {
                             Text(stringResource(R.string.delete))
                         }
                     },
                     dismissButton = {
                         TextButton(
-                            onClick = { openAlertDialog.value = false }) {
+                            onClick = { viewModel.updateAlertDialog(false) }) {
                             Text(stringResource(R.string.cancel))
                         }
                     }
@@ -123,6 +105,35 @@ fun SimpleNotesApp() {
 
 private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
     viewModel.addNote(note)
+}
+
+@Composable
+fun NoteList(viewModel: NotesViewModel, notes: List<Note>, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(32.dp)
+    ) {
+        notes.forEach { note ->
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = note.text,
+                    modifier = Modifier.weight(1f),
+                    fontSize = 24.sp
+                )
+                Icon(
+                    Icons.Filled.Clear,
+                    contentDescription = stringResource(R.string.remove),
+                    modifier = Modifier
+                        .clickable {
+                            viewModel.noteToDelete = note.id
+                            viewModel.updateAlertDialog(true)
+                        }
+                )
+            }
+        }
+    }
 }
 
 @Composable

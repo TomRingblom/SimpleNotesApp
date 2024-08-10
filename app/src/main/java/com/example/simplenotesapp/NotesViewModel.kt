@@ -1,5 +1,7 @@
 package com.example.simplenotesapp
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.simplenotesapp.model.Note
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 class NotesViewModel : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> get() = _notes
+    private val _openAlertDialog = MutableLiveData(false)
+    val openAlertDialog: LiveData<Boolean> = _openAlertDialog
+    var noteToDelete = 0
 
     fun addNote(text: String) {
         val id = _notes.value.size + 1
@@ -18,5 +23,9 @@ class NotesViewModel : ViewModel() {
     fun removeNote(id: Int) {
         val updatedList = _notes.value.filter { it.id != id }
         _notes.value = updatedList
+    }
+
+    fun updateAlertDialog(show: Boolean) {
+        _openAlertDialog.value = show
     }
 }
