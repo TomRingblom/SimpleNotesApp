@@ -73,31 +73,7 @@ fun SimpleNotesApp() {
         )
         when {
             openAlertDialog -> {
-                AlertDialog(
-                    icon = { Icon(Icons.Filled.Warning, contentDescription = null)},
-                    title = {
-                        Text(stringResource(R.string.delete_note))
-                    },
-                    text = {
-                        Text(stringResource(R.string.alert_dialog_delete_note_question))
-                    },
-                    onDismissRequest = { viewModel.updateAlertDialog(false) },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.updateAlertDialog(false)
-                                viewModel.removeNote(viewModel.noteToDelete)
-                            }) {
-                            Text(stringResource(R.string.delete))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = { viewModel.updateAlertDialog(false) }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    }
-                )
+                NoteAlertDialog(viewModel)
             }
         }
     }
@@ -138,7 +114,7 @@ fun NoteList(viewModel: NotesViewModel, notes: List<Note>, modifier: Modifier = 
 
 @Composable
 fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("")}
+    var text by remember { mutableStateOf("") }
     Column(modifier = modifier
         .padding(32.dp)
     ) {
@@ -174,6 +150,35 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
             Text(stringResource(R.string.add_note))
         }
     }
+}
+
+@Composable
+fun NoteAlertDialog(viewModel: NotesViewModel) {
+    AlertDialog(
+        icon = { Icon(Icons.Filled.Warning, contentDescription = null)},
+        title = {
+            Text(stringResource(R.string.delete_note))
+        },
+        text = {
+            Text(stringResource(R.string.alert_dialog_delete_note_question))
+        },
+        onDismissRequest = { viewModel.updateAlertDialog(false) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateAlertDialog(false)
+                    viewModel.removeNote(viewModel.noteToDelete)
+                }) {
+                Text(stringResource(R.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { viewModel.updateAlertDialog(false) }) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)
