@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.simplenotesapp.model.Note
 import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.theme.EditScreen
@@ -65,13 +67,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
+    val viewModel: NotesViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Home.name,
     ) {
        composable(route = Screen.Home.name) {
            Box(modifier = Modifier.fillMaxSize()) {
-               val viewModel: NotesViewModel = viewModel()
                val notes = viewModel.notes.collectAsState().value
                val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
 //        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
@@ -93,8 +95,11 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
                }
            }
        }
-       composable(route = Screen.Edit.name) {
-           EditScreen()
+       composable(
+           route = Screen.Edit.name + "/{id}",
+           arguments = listOf(navArgument("id") { type = NavType.IntType})
+       ) { args ->
+           EditScreen(viewModel, args.arguments?.getInt("id"))
        }
     }
 
@@ -124,7 +129,7 @@ fun NoteList(viewModel: NotesViewModel, navController: NavHostController, notes:
                     contentDescription = "Edit",
                     modifier = Modifier
                         .clickable {
-                            navController.navigate(route = Screen.Edit.name)
+                            navController.navigate(route = "${Screen.Edit.name}/${note.id}")
                         })
                 Icon(
                     Icons.Filled.Clear,
