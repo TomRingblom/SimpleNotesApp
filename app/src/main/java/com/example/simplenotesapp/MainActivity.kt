@@ -50,6 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.simplenotesapp.model.Note
 import com.example.simplenotesapp.navigation.Screen
+import com.example.simplenotesapp.ui.HomeScreen
 import com.example.simplenotesapp.ui.theme.EditScreen
 import com.example.simplenotesapp.ui.theme.SimpleNotesAppTheme
 
@@ -73,27 +74,7 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
         startDestination = Screen.Home.name,
     ) {
        composable(route = Screen.Home.name) {
-           Box(modifier = Modifier.fillMaxSize()) {
-               val notes = viewModel.notes.collectAsState().value
-               val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
-//        val notes = listOf("Hello World!", "Hello Kotlin!", "Hello Android!")
-
-               NoteList(
-                   viewModel = viewModel,
-                   navController = navController,
-                   modifier = Modifier.align(Alignment.TopCenter),
-                   notes = notes
-               )
-               AddNote(
-                   viewModel = viewModel,
-                   modifier = Modifier.align(Alignment.Center)
-               )
-               when {
-                   openAlertDialog -> {
-                       NoteAlertDialog(viewModel)
-                   }
-               }
-           }
+            HomeScreen(viewModel = viewModel, navController = navController)
        }
        composable(
            route = Screen.Edit.name + "/{id}",
@@ -103,123 +84,6 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
        }
     }
 
-}
-
-private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
-    viewModel.addNote(note)
-}
-
-@Composable
-fun NoteList(viewModel: NotesViewModel, navController: NavHostController, notes: List<Note>, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .padding(32.dp)
-    ) {
-        notes.forEach { note ->
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = note.text,
-                    modifier = Modifier.weight(1f),
-                    fontSize = 24.sp
-                )
-                Icon(
-                    Icons.Filled.Edit,
-                    contentDescription = "Edit",
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate(route = "${Screen.Edit.name}/${note.id}")
-                        })
-                Icon(
-                    Icons.Filled.Clear,
-                    contentDescription = stringResource(R.string.remove),
-                    modifier = Modifier
-                        .clickable {
-                            viewModel.noteToDelete = note.id
-                            viewModel.updateAlertDialog(true)
-                        }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("") }
-    Column(modifier = modifier
-        .padding(32.dp)
-    ) {
-        TextField(
-            value = text,
-            onValueChange = { text = it},
-            label = { Text(stringResource(R.string.add_a_note))},
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Sentences,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if(text.isNotEmpty()) {
-                        addNoteToViewModel(viewModel, text)
-                        text = ""
-                    }
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                if(text.isNotEmpty()) {
-                    addNoteToViewModel(viewModel, text)
-                    text = ""
-                }
-            }
-        ) {
-            Text(stringResource(R.string.add_note))
-        }
-    }
-}
-
-@Composable
-fun NoteAlertDialog(viewModel: NotesViewModel) {
-    AlertDialog(
-        icon = {
-            val iconColor = Color(0xFFF07167)
-            Icon(
-                imageVector =  Icons.Filled.Warning,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = iconColor
-            )
-       },
-        title = {
-            Text(stringResource(R.string.delete_note))
-        },
-        text = {
-            Text(stringResource(R.string.alert_dialog_delete_note_question))
-        },
-        onDismissRequest = { viewModel.updateAlertDialog(false) },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.updateAlertDialog(false)
-                    viewModel.removeNote(viewModel.noteToDelete)
-                }) {
-                Text(stringResource(R.string.delete))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { viewModel.updateAlertDialog(false) }) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
-    )
 }
 
 @Preview(showBackground = true)
