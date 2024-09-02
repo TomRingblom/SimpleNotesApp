@@ -99,7 +99,7 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
            route = Screen.Edit.name + "/{id}",
            arguments = listOf(navArgument("id") { type = NavType.IntType})
        ) { args ->
-           EditScreen(viewModel, args.arguments?.getInt("id"))
+           EditScreen(viewModel, navController, args.arguments?.getInt("id"))
        }
     }
 

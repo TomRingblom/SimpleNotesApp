@@ -1,5 +1,6 @@
 package com.example.simplenotesapp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,19 @@ class NotesViewModel : ViewModel() {
     fun removeNote(id: Int) {
         val updatedList = _notes.value.filter { it.id != id }
         _notes.value = updatedList
+    }
+
+    fun editNoteById(id: Int?, text: String) {
+        val index = _notes.value.indexOfFirst { it.id == id }
+
+        if (index != -1) {
+            val currentList = _notes.value.toMutableList()
+            val updatedNote = currentList[index].copy(text = text)
+            currentList[index] = updatedNote
+            _notes.value = currentList
+        } else {
+            Log.i("Note not created!", "Note with id $id not found.")
+        }
     }
 
     fun updateAlertDialog(show: Boolean) {

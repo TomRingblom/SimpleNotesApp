@@ -1,6 +1,6 @@
 package com.example.simplenotesapp.model
 
-class Note(
+data class Note(
     val id: Int,
     val text: String
 ) {
