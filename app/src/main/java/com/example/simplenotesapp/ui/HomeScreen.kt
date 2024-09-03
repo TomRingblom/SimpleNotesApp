@@ -67,15 +67,18 @@ fun HomeScreen(viewModel: NotesViewModel, navController: NavHostController,) {
 }
 
 @Composable
-fun NoteList(viewModel: NotesViewModel, navController: NavHostController, notes: List<Note>, modifier: Modifier = Modifier) {
+fun NoteList(
+    viewModel: NotesViewModel,
+    navController: NavHostController,
+    notes: List<Note>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .padding(32.dp)
     ) {
         notes.forEach { note ->
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = note.text,
                     modifier = Modifier.weight(1f),
@@ -109,9 +112,7 @@ private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
 @Composable
 fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") }
-    Column(modifier = modifier
-        .padding(32.dp)
-    ) {
+    Column(modifier = modifier.padding(32.dp)) {
         TextField(
             value = text,
             onValueChange = { text = it},
@@ -176,7 +177,9 @@ fun NoteAlertDialog(viewModel: NotesViewModel) {
         },
         dismissButton = {
             TextButton(
-                onClick = { viewModel.updateAlertDialog(false) }) {
+                onClick = {
+                    viewModel.updateAlertDialog(false)
+                }) {
                 Text(stringResource(R.string.cancel))
             }
         }
