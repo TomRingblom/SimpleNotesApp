@@ -1,6 +1,7 @@
 package com.example.simplenotesapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,15 +16,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +53,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.simplenotesapp.model.Note
@@ -66,24 +74,62 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleNotesAppBar(
+    currentScreen: Screen,
+    canNavigateBack: Boolean,
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = { Text(currentScreen.name) },
+        modifier = modifier,
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back)
+                    )
+                }
+            }
+        }
+    )
+}
+
 @Composable
 fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen = Screen.valueOf(
+        backStackEntry?.destination?.route ?: Screen.Home.name
+    )
     val viewModel: NotesViewModel = viewModel()
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Home.name,
-    ) {
-       composable(route = Screen.Home.name) {
-            HomeScreen(viewModel = viewModel, navController = navController)
-       }
-       composable(
-           route = Screen.Edit.name + "/{id}",
-           arguments = listOf(navArgument("id") { type = NavType.IntType})
-       ) { args ->
-           EditScreen(viewModel, navController, args.arguments?.getInt("id"))
-       }
+    Scaffold(
+        topBar = {
+            SimpleNotesAppBar(
+                currentScreen = currentScreen,
+                canNavigateBack = navController.previousBackStackEntry != null,
+                navigateUp = { navController.navigateUp() })
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.name,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            Log.i("Navigation in NavHost:", "${Screen.Edit.name}/{id}")
+            composable(route = Screen.Home.name) {
+                HomeScreen(viewModel = viewModel, navController = navController)
+            }
+            composable(
+                route = "edit/{id}",
+//                arguments = listOf(navArgument("id") { type = NavType.IntType})
+            ) { args ->
+                EditScreen(viewModel, navController, args.arguments?.getString("id"))
+            }
+        }
     }
-
 }
 
 @Preview(showBackground = true)

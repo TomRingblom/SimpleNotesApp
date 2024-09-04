@@ -9,4 +9,7 @@
     <string name="add_note">Add Note</string>
     <string name="edit_note">Edit note</string>
     <string name="save">Save</string>
+    <string name="home">Home</string>
+    <string name="edit">Edit</string>
+    <string name="back">Back</string>
 </resources>

@@ -31,11 +31,11 @@ import com.example.simplenotesapp.navigation.Screen
 fun EditScreen(
     viewModel: NotesViewModel,
     navController: NavHostController,
-    id: Int?,
+    id: String?,
     modifier: Modifier = Modifier
 ) {
     val notes = viewModel.notes.collectAsState().value
-    val note = notes.firstOrNull { it.id == id}
+    val note = notes.firstOrNull { it.id == id?.toInt()}
     var text by remember { mutableStateOf(note!!.text) }
     Column(modifier = modifier
         .fillMaxSize()
