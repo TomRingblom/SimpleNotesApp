@@ -56,6 +56,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.simplenotesapp.model.Note
 import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.HomeScreen
@@ -83,7 +84,7 @@ fun SimpleNotesAppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(currentScreen.name) },
+        title = { currentScreen.name },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
@@ -98,35 +99,44 @@ fun SimpleNotesAppBar(
     )
 }
 
+fun getScreenFromRoute(route: String?): Screen {
+    return when {
+        route == null -> Screen.Home
+        route.startsWith(Screen.Edit.route.substringBefore("/{id}")) -> Screen.Edit
+        else -> Screen.valueOf(route)
+    }
+}
+
 @Composable
 fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screen.valueOf(
-        backStackEntry?.destination?.route ?: Screen.Home.name
-    )
+    val currentScreen = getScreenFromRoute(backStackEntry?.destination?.route)
     val viewModel: NotesViewModel = viewModel()
     Scaffold(
         topBar = {
             SimpleNotesAppBar(
                 currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
+                canNavigateBack = navController.previousBackStackEntry != null ,
                 navigateUp = { navController.navigateUp() })
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.name,
+            startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            Log.i("Navigation in NavHost:", "${Screen.Edit.name}/{id}")
-            composable(route = Screen.Home.name) {
+            composable(route = Screen.Home.route) {
                 HomeScreen(viewModel = viewModel, navController = navController)
             }
             composable(
-                route = "edit/{id}",
-//                arguments = listOf(navArgument("id") { type = NavType.IntType})
+                route = Screen.Edit.route,
+                arguments = listOf(navArgument("id") { type = NavType.StringType})
             ) { args ->
-                EditScreen(viewModel, navController, args.arguments?.getString("id"))
+                EditScreen(
+                    viewModel = viewModel,
+                    navController = navController,
+                    id = args.arguments?.getString("id")
+                )
             }
         }
     }

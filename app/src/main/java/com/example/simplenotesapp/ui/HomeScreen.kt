@@ -90,8 +90,7 @@ fun NoteList(
                     contentDescription = "Edit",
                     modifier = Modifier
                         .clickable {
-                            Log.i("Navigation in Icon:", "${Screen.Edit.name}/${note.id}")
-                            navController.navigate(route = "${Screen.Edit.name.toString()}/${note.id}")
+                            navController.navigate(route = "Edit/${note.id}")
                         }
                 )
                 Icon(
