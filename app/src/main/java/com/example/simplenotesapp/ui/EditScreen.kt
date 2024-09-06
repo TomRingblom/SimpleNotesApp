@@ -56,7 +56,6 @@ fun EditScreen(
                     if(text.isNotEmpty()) {
                         viewModel.editNoteById(note?.id, text)
                         navController.popBackStack(Screen.Home.route, inclusive = false)
-                        navController.navigate(route = Screen.Home.route)
                         text = ""
                     }
                 }
@@ -70,7 +69,6 @@ fun EditScreen(
                 if(text.isNotEmpty()) {
                     viewModel.editNoteById(note?.id, text)
                     navController.popBackStack(Screen.Home.route, inclusive = false)
-                    navController.navigate(route = Screen.Home.route)
                     text = ""
                 }
             }
