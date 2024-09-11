@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.navigation.Screen
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(viewModel: NotesViewModel, navController: NavHostController,) {
@@ -115,6 +117,7 @@ private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
 @Composable
 fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier.padding(32.dp)) {
         TextField(
             value = text,
@@ -130,7 +133,10 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
                 onDone = {
                     if(text.isNotEmpty()) {
                         addNoteToViewModel(viewModel, text)
-                        text = ""
+                        coroutineScope.launch {
+                            viewModel.saveNote(text)
+                            text = ""
+                        }
                     }
                 }
             ),
@@ -141,7 +147,10 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
             onClick = {
                 if(text.isNotEmpty()) {
                     addNoteToViewModel(viewModel, text)
-                    text = ""
+                    coroutineScope.launch {
+                        viewModel.saveNote(text)
+                        text = ""
+                    }
                 }
             }
         ) {
