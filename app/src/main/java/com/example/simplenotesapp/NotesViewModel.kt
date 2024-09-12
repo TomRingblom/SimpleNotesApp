@@ -8,6 +8,7 @@ import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.data.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
@@ -26,9 +27,22 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
         noteRepository.insertNote(Note(text = text))
     }
 
-    fun removeNote(id: Int) {
-        val updatedList = _notes.value.filter { it.id != id }
-        _notes.value = updatedList
+//    fun removeNote(id: Int) {
+//        val updatedList = _notes.value.filter { it.id != id }
+//        _notes.value = updatedList
+//    }
+
+    suspend fun removeNote(noteId: Int) {
+        val note = noteRepository.getNoteStream(noteId).firstOrNull()
+        if (note != null) {
+            noteRepository.deleteNote(note)
+        } else {
+            Log.i("Note not removed!", "Note with id $noteId not found.")
+        }
+    }
+
+    suspend fun getAllNotes(): List<Note> {
+        return noteRepository.getAllNotesStream().firstOrNull() ?: emptyList()
     }
 
     fun editNoteById(id: Int?, text: String) {

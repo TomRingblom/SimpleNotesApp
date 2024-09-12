@@ -43,6 +43,7 @@ import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.navigation.Screen
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,6 +77,11 @@ fun NoteList(
     notes: List<Note>,
     modifier: Modifier = Modifier
 ) {
+//    val coroutineScope = rememberCoroutineScope()
+//    var notes = List<Note>()
+//    coroutineScope.launch {
+//        notes = viewModel.noteRepository.getAllNotesStream().collect()
+//    }
     Column(
         modifier = modifier
             .padding(32.dp)
@@ -161,6 +167,7 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
 
 @Composable
 fun NoteAlertDialog(viewModel: NotesViewModel) {
+    val coroutineScope = rememberCoroutineScope()
     AlertDialog(
         icon = {
             val iconColor = Color(0xFFF07167)
@@ -182,7 +189,10 @@ fun NoteAlertDialog(viewModel: NotesViewModel) {
             TextButton(
                 onClick = {
                     viewModel.updateAlertDialog(false)
-                    viewModel.removeNote(viewModel.noteToDelete)
+//                    viewModel.removeNote(viewModel.noteToDelete)
+                    coroutineScope.launch {
+                        viewModel.removeNote(viewModel.noteToDelete)
+                    }
                 }) {
                 Text(stringResource(R.string.delete))
             }
