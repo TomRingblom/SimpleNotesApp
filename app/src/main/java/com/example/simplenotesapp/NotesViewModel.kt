@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.data.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
@@ -16,6 +20,17 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     private val _openAlertDialog = MutableLiveData(false)
     val openAlertDialog: LiveData<Boolean> = _openAlertDialog
     var noteToDelete = 0
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
+
+    val noteUiState: StateFlow<NoteUiState> = noteRepository.getAllNotesStream().map { NoteUiState(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = NoteUiState()
+    )
 
     fun addNote(text: String) {
         val id = _notes.value.size + 1
@@ -62,3 +77,5 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
         _openAlertDialog.value = show
     }
 }
+
+data class NoteUiState(val noteList: List<Note> = listOf())
