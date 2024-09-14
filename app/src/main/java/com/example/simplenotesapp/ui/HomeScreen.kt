@@ -51,12 +51,13 @@ fun HomeScreen(viewModel: NotesViewModel, navController: NavHostController,) {
     Box(modifier = Modifier.fillMaxSize()) {
         val notes = viewModel.notes.collectAsState().value
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
+        val noteUiState by viewModel.noteUiState.collectAsState()
 
         NoteList(
             viewModel = viewModel,
             navController = navController,
             modifier = Modifier.align(Alignment.TopCenter),
-            notes = notes
+            notes = noteUiState.noteList
         )
         AddNote(
             viewModel = viewModel,
@@ -77,11 +78,6 @@ fun NoteList(
     notes: List<Note>,
     modifier: Modifier = Modifier
 ) {
-//    val coroutineScope = rememberCoroutineScope()
-//    var notes = List<Note>()
-//    coroutineScope.launch {
-//        notes = viewModel.noteRepository.getAllNotesStream().collect()
-//    }
     Column(
         modifier = modifier
             .padding(32.dp)
@@ -116,10 +112,6 @@ fun NoteList(
     }
 }
 
-private fun addNoteToViewModel(viewModel: NotesViewModel, note: String) {
-    viewModel.addNote(note)
-}
-
 @Composable
 fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") }
@@ -138,7 +130,6 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
             keyboardActions = KeyboardActions(
                 onDone = {
                     if(text.isNotEmpty()) {
-                        addNoteToViewModel(viewModel, text)
                         coroutineScope.launch {
                             viewModel.saveNote(text)
                             text = ""
@@ -152,7 +143,6 @@ fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
         Button(
             onClick = {
                 if(text.isNotEmpty()) {
-                    addNoteToViewModel(viewModel, text)
                     coroutineScope.launch {
                         viewModel.saveNote(text)
                         text = ""
@@ -189,7 +179,6 @@ fun NoteAlertDialog(viewModel: NotesViewModel) {
             TextButton(
                 onClick = {
                     viewModel.updateAlertDialog(false)
-//                    viewModel.removeNote(viewModel.noteToDelete)
                     coroutineScope.launch {
                         viewModel.removeNote(viewModel.noteToDelete)
                     }

@@ -32,20 +32,9 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
             initialValue = NoteUiState()
     )
 
-    fun addNote(text: String) {
-        val id = _notes.value.size + 1
-        val note = Note(id, text)
-        _notes.value += note
-    }
-
     suspend fun saveNote(text: String) {
         noteRepository.insertNote(Note(text = text))
     }
-
-//    fun removeNote(id: Int) {
-//        val updatedList = _notes.value.filter { it.id != id }
-//        _notes.value = updatedList
-//    }
 
     suspend fun removeNote(noteId: Int) {
         val note = noteRepository.getNoteStream(noteId).firstOrNull()
@@ -56,9 +45,9 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
-    suspend fun getAllNotes(): List<Note> {
-        return noteRepository.getAllNotesStream().firstOrNull() ?: emptyList()
-    }
+//    suspend fun getAllNotes(): List<Note> {
+//        return noteRepository.getAllNotesStream().firstOrNull() ?: emptyList()
+//    }
 
     fun editNoteById(id: Int?, text: String) {
         val index = _notes.value.indexOfFirst { it.id == id }
