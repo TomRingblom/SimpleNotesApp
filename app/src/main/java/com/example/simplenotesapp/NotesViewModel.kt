@@ -45,22 +45,31 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
         }
     }
 
+    suspend fun editNoteById(id: Int?, text: String) {
+        val note = noteRepository.getNoteStream(id!!).firstOrNull()
+        if (note != null) {
+            noteRepository.updateNote(note.copy(text = text))
+        } else {
+            Log.i("Note not edited!", "Note with id $id not found.")
+        }
+    }
+
 //    suspend fun getAllNotes(): List<Note> {
 //        return noteRepository.getAllNotesStream().firstOrNull() ?: emptyList()
 //    }
 
-    fun editNoteById(id: Int?, text: String) {
-        val index = _notes.value.indexOfFirst { it.id == id }
-
-        if (index != -1) {
-            val currentList = _notes.value.toMutableList()
-            val updatedNote = currentList[index].copy(text = text)
-            currentList[index] = updatedNote
-            _notes.value = currentList
-        } else {
-            Log.i("Note not created!", "Note with id $id not found.")
-        }
-    }
+//    fun editNoteById(id: Int?, text: String) {
+//        val index = _notes.value.indexOfFirst { it.id == id }
+//
+//        if (index != -1) {
+//            val currentList = _notes.value.toMutableList()
+//            val updatedNote = currentList[index].copy(text = text)
+//            currentList[index] = updatedNote
+//            _notes.value = currentList
+//        } else {
+//            Log.i("Note not created!", "Note with id $id not found.")
+//        }
+//    }
 
     fun updateAlertDialog(show: Boolean) {
         _openAlertDialog.value = show

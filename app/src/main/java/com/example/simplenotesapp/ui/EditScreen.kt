@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,8 @@ import androidx.navigation.NavHostController
 import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.navigation.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditScreen(
@@ -34,9 +37,10 @@ fun EditScreen(
     id: String?,
     modifier: Modifier = Modifier
 ) {
-    val notes = viewModel.notes.collectAsState().value
-    val note = notes.firstOrNull { it.id == id?.toInt()}
+    val noteUiState by viewModel.noteUiState.collectAsState()
+    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt()}
     var text by remember { mutableStateOf(note!!.text) }
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier
         .fillMaxSize()
         .padding(10.dp)
@@ -53,11 +57,13 @@ fun EditScreen(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if(text.isNotEmpty()) {
-                        viewModel.editNoteById(note?.id, text)
-                        navController.popBackStack(Screen.Home.route, inclusive = false)
-                        text = ""
-                    }
+                    saveNote(
+                        viewModel = viewModel,
+                        id = note!!.id,
+                        text = text,
+                        navController = navController,
+                        coroutineScope = coroutineScope
+                    )
                 }
             ),
             modifier = Modifier
@@ -66,14 +72,32 @@ fun EditScreen(
         )
         Button(
             onClick = {
-                if(text.isNotEmpty()) {
-                    viewModel.editNoteById(note?.id, text)
-                    navController.popBackStack(Screen.Home.route, inclusive = false)
-                    text = ""
-                }
+                saveNote(
+                    viewModel = viewModel,
+                    id = note!!.id,
+                    text = text,
+                    navController = navController,
+                    coroutineScope = coroutineScope
+                )
             }
         ) {
             Text(stringResource(R.string.save))
+        }
+    }
+}
+
+private fun saveNote(
+    viewModel: NotesViewModel,
+    id: Int,
+    text: String,
+    navController:
+    NavHostController,
+    coroutineScope: CoroutineScope
+) {
+    if(text.isNotEmpty()) {
+        coroutineScope.launch {
+            viewModel.editNoteById(id, text)
+            navController.popBackStack(Screen.Home.route, inclusive = false)
         }
     }
 }

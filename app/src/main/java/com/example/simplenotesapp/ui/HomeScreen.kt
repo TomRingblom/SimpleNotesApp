@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(viewModel: NotesViewModel, navController: NavHostController,) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val notes = viewModel.notes.collectAsState().value
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
         val noteUiState by viewModel.noteUiState.collectAsState()
 
