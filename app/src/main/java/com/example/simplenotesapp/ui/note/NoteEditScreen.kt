@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.simplenotesapp.NotesViewModel
@@ -38,17 +37,18 @@ fun EditScreen(
     modifier: Modifier = Modifier
 ) {
     val noteUiState by viewModel.noteUiState.collectAsState()
-    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt()}
+    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
     var text by remember { mutableStateOf(note!!.text) }
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier = modifier
-        .fillMaxSize()
-        .padding(10.dp)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(10.dp)
     ) {
         TextField(
             value = text,
-            onValueChange = { text = it},
-            label = { Text(stringResource(R.string.edit_note))},
+            onValueChange = { text = it },
+            label = { Text(stringResource(R.string.edit_note)) },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -94,7 +94,7 @@ private fun saveNote(
     NavHostController,
     coroutineScope: CoroutineScope
 ) {
-    if(text.isNotEmpty()) {
+    if (text.isNotEmpty()) {
         coroutineScope.launch {
             viewModel.editNoteById(id, text)
             navController.popBackStack(Screen.Home.route, inclusive = false)

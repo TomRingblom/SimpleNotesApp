@@ -1,4 +1,4 @@
-package com.example.simplenotesapp.ui
+package com.example.simplenotesapp.ui.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,7 +43,6 @@ import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.navigation.Screen
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
