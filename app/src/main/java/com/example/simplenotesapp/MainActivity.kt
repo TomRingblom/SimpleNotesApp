@@ -28,7 +28,10 @@ import androidx.navigation.navArgument
 import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.AppViewModelProvider
 import com.example.simplenotesapp.ui.home.HomeScreen
-import com.example.simplenotesapp.ui.theme.EditScreen
+import com.example.simplenotesapp.ui.navigation.NavigationDestination
+import com.example.simplenotesapp.ui.note.NoteEditViewModel
+import com.example.simplenotesapp.ui.theme.NoteEditDestination
+import com.example.simplenotesapp.ui.theme.NoteEditScreen
 import com.example.simplenotesapp.ui.theme.SimpleNotesAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,13 +49,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleNotesAppBar(
-    currentScreen: Screen,
+//    currentScreen: Screen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { currentScreen.name },
+//        title = { currentScreen.name },
+        title = {"Hello" },
         modifier = modifier,
         navigationIcon = {
             if (canNavigateBack) {
@@ -67,23 +71,23 @@ fun SimpleNotesAppBar(
     )
 }
 
-fun getScreenFromRoute(route: String?): Screen {
-    return when {
-        route == null -> Screen.Home
-        route.startsWith(Screen.Edit.route.substringBefore("/{id}")) -> Screen.Edit
-        else -> Screen.valueOf(route)
-    }
-}
+//fun getScreenFromRoute(route: String?): NavigationDestination {
+//    return when {
+//        route == null -> Screen.Home
+//        route.startsWith(NoteEditDestination.route.substringBefore("/{id}")) -> NoteEditDestination.route
+//        else -> NavigationDestination.valueOf(route)
+//    }
+//}
 
 @Composable
 fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = getScreenFromRoute(backStackEntry?.destination?.route)
-    val viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+//    val backStackEntry by navController.currentBackStackEntryAsState()
+//    val currentScreen = getScreenFromRoute(backStackEntry?.destination?.route)
+    val viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
     Scaffold(
         topBar = {
             SimpleNotesAppBar(
-                currentScreen = currentScreen,
+//                currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null ,
                 navigateUp = { navController.navigateUp() })
         }
@@ -94,17 +98,24 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = Screen.Home.route) {
-                HomeScreen(viewModel = viewModel, navController = navController)
+                HomeScreen(navController = navController)
             }
+//            composable(
+//                route = Screen.Edit.route,
+//                arguments = listOf(navArgument("id") { type = NavType.StringType})
+//            ) { args ->
+//                NoteEditScreen(
+//                    viewModel = viewModel,
+//                    navController = navController,
+//                    id = args.arguments?.getString("id")
+//                )
+//            }
             composable(
-                route = Screen.Edit.route,
-                arguments = listOf(navArgument("id") { type = NavType.StringType})
-            ) { args ->
-                EditScreen(
-                    viewModel = viewModel,
-                    navController = navController,
-                    id = args.arguments?.getString("id")
-                )
+                route = NoteEditDestination.routeWithArgs,
+                arguments = listOf(navArgument(NoteEditDestination.noteIdArg) {
+                type = NavType.IntType
+            }))  {
+                NoteEditScreen(navController = navController, id = "$it")
             }
         }
     }

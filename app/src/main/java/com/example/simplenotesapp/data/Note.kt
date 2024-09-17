@@ -9,3 +9,5 @@ data class Note(
     val id: Int = 0,
     val text: String
 )
+
+fun Note.toNoteDto(): NoteDto = NoteDto(id = id, text = text)

@@ -38,15 +38,17 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.navigation.Screen
+import com.example.simplenotesapp.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(viewModel: NotesViewModel, navController: NavHostController,) {
+fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController,) {
     Box(modifier = Modifier.fillMaxSize()) {
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
         val noteUiState by viewModel.noteUiState.collectAsState()

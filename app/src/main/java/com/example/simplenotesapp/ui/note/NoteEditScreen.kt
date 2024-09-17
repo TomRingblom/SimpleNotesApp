@@ -22,23 +22,35 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
 import com.example.simplenotesapp.navigation.Screen
+import com.example.simplenotesapp.ui.AppViewModelProvider
+import com.example.simplenotesapp.ui.navigation.NavigationDestination
+import com.example.simplenotesapp.ui.note.NoteEditViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+object NoteEditDestination : NavigationDestination {
+    override val route: String = "note_edit"
+    override val titleRes: Int = R.string.edit_note
+    const val noteIdArg = "id"
+    val routeWithArgs = "$route/{$noteIdArg}"
+}
+
 @Composable
-fun EditScreen(
-    viewModel: NotesViewModel,
+fun NoteEditScreen(
+//    viewModel: NotesViewModel,
+    viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController,
     id: String?,
     modifier: Modifier = Modifier
 ) {
-    val noteUiState by viewModel.noteUiState.collectAsState()
-    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
-    var text by remember { mutableStateOf(note!!.text) }
+    val noteUiState by viewModel.uiState.collectAsState()
+//    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
+    var text by remember { mutableStateOf(noteUiState.noteDto.text) }
     val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
@@ -59,7 +71,7 @@ fun EditScreen(
                 onDone = {
                     saveNote(
                         viewModel = viewModel,
-                        id = note!!.id,
+                        id = noteUiState.noteDto.id,
                         text = text,
                         navController = navController,
                         coroutineScope = coroutineScope
@@ -74,7 +86,7 @@ fun EditScreen(
             onClick = {
                 saveNote(
                     viewModel = viewModel,
-                    id = note!!.id,
+                    id = noteUiState.noteDto.id,
                     text = text,
                     navController = navController,
                     coroutineScope = coroutineScope
@@ -87,7 +99,7 @@ fun EditScreen(
 }
 
 private fun saveNote(
-    viewModel: NotesViewModel,
+    viewModel: NoteEditViewModel,
     id: Int,
     text: String,
     navController:
