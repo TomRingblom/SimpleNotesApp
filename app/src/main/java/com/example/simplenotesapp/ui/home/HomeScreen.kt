@@ -1,5 +1,6 @@
 package com.example.simplenotesapp.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -94,6 +95,7 @@ fun NoteList(
                     contentDescription = stringResource(R.string.edit),
                     modifier = Modifier
                         .clickable {
+                            Log.i("NoteList", "noteId: ${note.id}")
                             navController.navigate(route = "${Screen.Edit.name}/${note.id}")
                         }
                 )

@@ -1,5 +1,6 @@
 package com.example.simplenotesapp.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 object NoteEditDestination : NavigationDestination {
-    override val route: String = "note_edit"
+    override val route: String = "Edit"
     override val titleRes: Int = R.string.edit_note
     const val noteIdArg = "id"
     val routeWithArgs = "$route/{$noteIdArg}"
@@ -49,9 +50,14 @@ fun NoteEditScreen(
     modifier: Modifier = Modifier
 ) {
     val noteUiState by viewModel.uiState.collectAsState()
+    val id = viewModel.saved
+
+
+    Log.i("SavedStateHandle", "id: ${viewModel.saved}")
 //    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
-    var text by remember { mutableStateOf(noteUiState.noteDto.text) }
+    var text by remember { mutableStateOf(noteUiState!!.text) }
     val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -71,7 +77,7 @@ fun NoteEditScreen(
                 onDone = {
                     saveNote(
                         viewModel = viewModel,
-                        id = noteUiState.noteDto.id,
+                        id = noteUiState!!.id,
                         text = text,
                         navController = navController,
                         coroutineScope = coroutineScope
@@ -86,7 +92,7 @@ fun NoteEditScreen(
             onClick = {
                 saveNote(
                     viewModel = viewModel,
-                    id = noteUiState.noteDto.id,
+                    id = noteUiState!!.id,
                     text = text,
                     navController = navController,
                     coroutineScope = coroutineScope

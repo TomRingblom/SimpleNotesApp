@@ -1,6 +1,7 @@
 package com.example.simplenotesapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -115,6 +116,9 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
                 arguments = listOf(navArgument(NoteEditDestination.noteIdArg) {
                 type = NavType.IntType
             }))  {
+                Log.i("NoteEditDestination", "noteIdArg: ${NoteEditDestination.noteIdArg}")
+                Log.i("NoteEditDestination", "routeWithArgs: ${NoteEditDestination.routeWithArgs}")
+                Log.i("NoteEditDestination", "args: ${it.arguments?.getString(NoteEditDestination.noteIdArg)}")
                 NoteEditScreen(navController = navController, id = "$it")
             }
         }
