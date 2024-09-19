@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.simplenotesapp.NotesViewModel
 import com.example.simplenotesapp.R
+import com.example.simplenotesapp.data.toNote
 import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.AppViewModelProvider
 import com.example.simplenotesapp.ui.navigation.NavigationDestination
@@ -51,12 +52,14 @@ fun NoteEditScreen(
 ) {
     val noteUiState by viewModel.uiState.collectAsState()
     val id = viewModel.saved
+    val note = noteUiState.note.toNote()
 
 
     Log.i("SavedStateHandle", "id: ${viewModel.saved}")
 //    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
-    var text by remember { mutableStateOf(noteUiState!!.text) }
+//    var text by remember { mutableStateOf(note.text) }
     val coroutineScope = rememberCoroutineScope()
+    var text = note.text
 
     Column(
         modifier = modifier
@@ -77,7 +80,7 @@ fun NoteEditScreen(
                 onDone = {
                     saveNote(
                         viewModel = viewModel,
-                        id = noteUiState!!.id,
+                        id = note.id,
                         text = text,
                         navController = navController,
                         coroutineScope = coroutineScope
@@ -92,7 +95,7 @@ fun NoteEditScreen(
             onClick = {
                 saveNote(
                     viewModel = viewModel,
-                    id = noteUiState!!.id,
+                    id = note.id,
                     text = text,
                     navController = navController,
                     coroutineScope = coroutineScope

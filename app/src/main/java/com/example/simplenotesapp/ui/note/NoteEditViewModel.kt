@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.data.NoteDto
 import com.example.simplenotesapp.data.NoteRepository
-import com.example.simplenotesapp.data.toNoteDto
-import com.example.simplenotesapp.ui.theme.NoteEditDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -29,14 +27,14 @@ class NoteEditViewModel(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    val uiState: StateFlow<Note?> = noteRepository.getNoteStream(26)
+    val uiState: StateFlow<NoteEditUiState> = noteRepository.getNoteStream(saved ?: 0)
         .filterNotNull()
         .map {
-            Note(id = it.id, text = it.text)
+            NoteEditUiState(note = NoteDto(it.id, it.text))
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = Note(text = ""))
+            initialValue = NoteEditUiState())
 
 //            .filterNotNull()
 //            .map {
@@ -68,4 +66,4 @@ class NoteEditViewModel(
     }
 }
 
-data class NoteEditUiState(val noteDto: NoteDto = NoteDto())
+data class NoteEditUiState(val note: NoteDto = NoteDto())
