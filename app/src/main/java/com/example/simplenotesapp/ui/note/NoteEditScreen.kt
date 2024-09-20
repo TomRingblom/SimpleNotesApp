@@ -50,16 +50,17 @@ fun NoteEditScreen(
     id: String?,
     modifier: Modifier = Modifier
 ) {
-    val noteUiState by viewModel.uiState.collectAsState()
+//    val noteUiState by viewModel.uiState.collectAsState()
     val id = viewModel.saved
-    val note = noteUiState.note.toNote()
+//    val note = noteUiState.note.toNote()
+    val text = viewModel.uiState.note.text
 
 
     Log.i("SavedStateHandle", "id: ${viewModel.saved}")
 //    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
 //    var text by remember { mutableStateOf(note.text) }
     val coroutineScope = rememberCoroutineScope()
-    var text = note.text
+//    var text = note.text
 
     Column(
         modifier = modifier
@@ -67,8 +68,8 @@ fun NoteEditScreen(
             .padding(10.dp)
     ) {
         TextField(
-            value = text,
-            onValueChange = { text = it },
+            value = viewModel.uiState.note.text,
+            onValueChange = { viewModel::updateUiState },
             label = { Text(stringResource(R.string.edit_note)) },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
@@ -80,8 +81,8 @@ fun NoteEditScreen(
                 onDone = {
                     saveNote(
                         viewModel = viewModel,
-                        id = note.id,
-                        text = text,
+                        id = viewModel.uiState.note.id,
+                        text = viewModel.uiState.note.text,
                         navController = navController,
                         coroutineScope = coroutineScope
                     )
@@ -95,8 +96,8 @@ fun NoteEditScreen(
             onClick = {
                 saveNote(
                     viewModel = viewModel,
-                    id = note.id,
-                    text = text,
+                    id = viewModel.uiState.note.id,
+                    text = viewModel.uiState.note.text,
                     navController = navController,
                     coroutineScope = coroutineScope
                 )

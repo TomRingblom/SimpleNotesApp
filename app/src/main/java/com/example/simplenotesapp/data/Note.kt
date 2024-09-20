@@ -2,6 +2,8 @@ package com.example.simplenotesapp.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.simplenotesapp.NoteUiState
+import com.example.simplenotesapp.ui.note.NoteEditUiState
 
 @Entity(tableName = "notes")
 data class Note(
@@ -11,3 +13,7 @@ data class Note(
 )
 
 fun Note.toNoteDto(): NoteDto = NoteDto(id = id, text = text)
+
+fun Note.toItemUiState(): NoteEditUiState = NoteEditUiState(
+    note = this.toNoteDto()
+)
