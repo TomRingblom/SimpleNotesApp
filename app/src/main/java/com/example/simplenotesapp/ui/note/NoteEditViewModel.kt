@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 
 class NoteEditViewModel(
     savedStateHandle: SavedStateHandle,
-    private val noteRepository: NoteRepository) : ViewModel() {
+    private val noteRepository: NoteRepository
+) : ViewModel() {
     init {
         viewModelScope.launch {
             uiState = noteRepository.getNoteStream(savedStateHandle["id"] ?: 0)
@@ -34,45 +35,16 @@ class NoteEditViewModel(
         }
     }
 
-//    private val itemId: Int = savedStateHandle.get<Int>(NoteEditDestination.noteIdArg)!!
-//    private val itemId: Int = checkNotNull(savedStateHandle[NoteEditDestination.noteIdArg])
-    private val itemId: Int = 26
-    val saved: Int? = savedStateHandle["id"]
-
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
     var uiState by mutableStateOf(NoteEditUiState())
         private set
 
-//    val uiState: StateFlow<NoteEditUiState> = noteRepository.getNoteStream(saved ?: 0)
-//        .filterNotNull()
-//        .map {
-//            NoteEditUiState(note = NoteDto(it.id, it.text))
-//        }.stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//            initialValue = NoteEditUiState())
-
     suspend fun editNoteById(id: Int?, text: String) {
-        val note = noteRepository.getNoteStream(id!!).firstOrNull()
+        val note = noteRepository.getNoteStream(id ?: 0).firstOrNull()
         if (note != null) {
             noteRepository.updateNote(note.copy(text = text))
         } else {
             Log.i("Note not edited!", "Note with id $id not found.")
         }
-    }
-
-    suspend fun getNoteById(id: Int) {
-        noteRepository.getNoteStream(id)
-            .filterNotNull()
-            .map {
-                Note(id = it.id, text = it.text)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = Note(text = ""))
     }
 
     fun updateUiState(noteDto: NoteDto) {

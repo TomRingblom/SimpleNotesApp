@@ -44,23 +44,11 @@ object NoteEditDestination : NavigationDestination {
 
 @Composable
 fun NoteEditScreen(
-//    viewModel: NotesViewModel,
     viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController,
-    id: String?,
     modifier: Modifier = Modifier
 ) {
-//    val noteUiState by viewModel.uiState.collectAsState()
-    val id = viewModel.saved
-//    val note = noteUiState.note.toNote()
-    val text = viewModel.uiState.note.text
-
-
-    Log.i("SavedStateHandle", "id: ${viewModel.saved}")
-//    val note = noteUiState.noteList.firstOrNull { it.id == id?.toInt() }
-//    var text by remember { mutableStateOf(note.text) }
     val coroutineScope = rememberCoroutineScope()
-//    var text = note.text
 
     Column(
         modifier = modifier
@@ -69,7 +57,9 @@ fun NoteEditScreen(
     ) {
         TextField(
             value = viewModel.uiState.note.text,
-            onValueChange = { viewModel::updateUiState },
+            onValueChange = {
+                viewModel.updateUiState(viewModel.uiState.note.copy(text = it))
+            },
             label = { Text(stringResource(R.string.edit_note)) },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
