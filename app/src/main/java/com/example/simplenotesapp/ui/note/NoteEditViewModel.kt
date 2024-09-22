@@ -7,36 +7,33 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.data.NoteDto
 import com.example.simplenotesapp.data.NoteRepository
-import com.example.simplenotesapp.data.toItemUiState
-import com.example.simplenotesapp.data.toNoteDto
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import com.example.simplenotesapp.ui.theme.NoteEditDestination
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NoteEditViewModel(
     savedStateHandle: SavedStateHandle,
     private val noteRepository: NoteRepository
 ) : ViewModel() {
+    var uiState by mutableStateOf(NoteEditUiState())
+        private set
+
+    private val itemId: Int = checkNotNull(savedStateHandle[NoteEditDestination.noteIdArg] ?: 0)
+
     init {
         viewModelScope.launch {
-            uiState = noteRepository.getNoteStream(savedStateHandle["id"] ?: 0)
+            uiState = noteRepository.getNoteStream(itemId)
                 .filterNotNull()
                 .map {
                     NoteEditUiState(note = NoteDto(it.id, it.text))
                 }.first()
         }
     }
-
-    var uiState by mutableStateOf(NoteEditUiState())
-        private set
 
     suspend fun editNoteById(id: Int?, text: String) {
         val note = noteRepository.getNoteStream(id ?: 0).firstOrNull()

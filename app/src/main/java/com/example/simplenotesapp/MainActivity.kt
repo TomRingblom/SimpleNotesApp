@@ -101,25 +101,12 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
             composable(route = Screen.Home.route) {
                 HomeScreen(navController = navController)
             }
-//            composable(
-//                route = Screen.Edit.route,
-//                arguments = listOf(navArgument("id") { type = NavType.StringType})
-//            ) { args ->
-//                NoteEditScreen(
-//                    viewModel = viewModel,
-//                    navController = navController,
-//                    id = args.arguments?.getString("id")
-//                )
-//            }
             composable(
                 route = NoteEditDestination.routeWithArgs,
                 arguments = listOf(navArgument(NoteEditDestination.noteIdArg) {
                 type = NavType.IntType
             }))  {
-                Log.i("NoteEditDestination", "noteIdArg: ${NoteEditDestination.noteIdArg}")
-                Log.i("NoteEditDestination", "routeWithArgs: ${NoteEditDestination.routeWithArgs}")
-                Log.i("NoteEditDestination", "args: ${it.arguments?.getString(NoteEditDestination.noteIdArg)}")
-                NoteEditScreen(navController = navController, id = "$it")
+                NoteEditScreen(navController = navController)
             }
         }
     }
