@@ -30,6 +30,7 @@ import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.AppViewModelProvider
 import com.example.simplenotesapp.ui.home.HomeScreen
 import com.example.simplenotesapp.ui.navigation.NavigationDestination
+import com.example.simplenotesapp.ui.note.NoteAddScreen
 import com.example.simplenotesapp.ui.note.NoteEditViewModel
 import com.example.simplenotesapp.ui.theme.NoteEditDestination
 import com.example.simplenotesapp.ui.theme.NoteEditScreen
@@ -107,6 +108,9 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
                 type = NavType.IntType
             }))  {
                 NoteEditScreen(navController = navController)
+            }
+            composable(route = Screen.Add.route) {
+                NoteAddScreen(navController = navController)
             }
         }
     }

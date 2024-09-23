@@ -49,7 +49,7 @@ import com.example.simplenotesapp.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController,) {
+fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
         val noteUiState by viewModel.noteUiState.collectAsState()
@@ -64,6 +64,11 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
             viewModel = viewModel,
             modifier = Modifier.align(Alignment.Center)
         )
+        Button(onClick = {
+            navController.navigate(Screen.Add.route)
+        }) {
+            Text(text = "Go to add note screen")
+        }
         when {
             openAlertDialog -> {
                 NoteAlertDialog(viewModel)
