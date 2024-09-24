@@ -60,14 +60,15 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
             modifier = Modifier.align(Alignment.TopCenter),
             notes = noteUiState.noteList
         )
-        AddNote(
-            viewModel = viewModel,
-            modifier = Modifier.align(Alignment.Center)
-        )
-        Button(onClick = {
+        Button(
+            onClick = {
             navController.navigate(Screen.Add.route)
-        }) {
-            Text(text = "Go to add note screen")
+        },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp)
+        ) {
+            Text(text = "Add a note")
         }
         when {
             openAlertDialog -> {
@@ -115,49 +116,6 @@ fun NoteList(
                         }
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun AddNote(viewModel: NotesViewModel, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
-    Column(modifier = modifier.padding(32.dp)) {
-        TextField(
-            value = text,
-            onValueChange = { text = it},
-            label = { Text(stringResource(R.string.add_a_note)) },
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Sentences,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if(text.isNotEmpty()) {
-                        coroutineScope.launch {
-                            viewModel.saveNote(text)
-                            text = ""
-                        }
-                    }
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                if(text.isNotEmpty()) {
-                    coroutineScope.launch {
-                        viewModel.saveNote(text)
-                        text = ""
-                    }
-                }
-            }
-        ) {
-            Text(stringResource(R.string.add_note))
         }
     }
 }
