@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -94,7 +96,7 @@ fun NoteList(
 ) {
     Column(
         modifier = modifier
-            .padding(32.dp)
+            .padding(16.dp)
     ) {
         val colors = listOf(0xFFFFDADB, 0xFFD1EAED, 0xFFFFD4AA, 0xFFFDF3B4)
         notes.forEach { note ->
@@ -105,7 +107,7 @@ fun NoteList(
                 navController = navController,
                 color = colors[randomNumber]
             )
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(4.dp))
         }
     }
 }
@@ -119,24 +121,19 @@ fun NoteItem(
 ) {
     Row(modifier = Modifier
         .fillMaxWidth()
+        .clip(RoundedCornerShape(8.dp))
         .background(Color(color))
-        .padding(8.dp)
+        .padding(16.dp)
+        .clickable {
+            navController.navigate(route = "${Screen.Edit.name}/${note.id}")
+        }
     ) {
         Text(
             text = note.text,
             modifier = Modifier.weight(1f),
             fontSize = 24.sp
         )
-        Icon(
-            Icons.Filled.Edit,
-            contentDescription = stringResource(R.string.edit),
-            modifier = Modifier
-                .clickable {
-                    Log.i("NoteList", "noteId: ${note.id}")
-                    navController.navigate(route = "${Screen.Edit.name}/${note.id}")
-                }
-        )
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
         Icon(
             Icons.Filled.Clear,
             contentDescription = stringResource(R.string.remove),
