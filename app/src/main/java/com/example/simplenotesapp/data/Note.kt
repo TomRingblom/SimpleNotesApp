@@ -9,7 +9,10 @@ import com.example.simplenotesapp.ui.note.NoteEditUiState
 data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val text: String
+    val title: String,
+    val text: String,
+    val color: Long,
+    val date: String
 )
 
 fun Note.toNoteDto(): NoteDto = NoteDto(id = id, text = text)

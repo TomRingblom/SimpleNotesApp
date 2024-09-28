@@ -1,5 +1,6 @@
 package com.example.simplenotesapp
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.util.Date
+import java.util.Locale
 
 class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
@@ -33,7 +36,9 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     )
 
     suspend fun saveNote(text: String) {
-        noteRepository.insertNote(Note(text = text))
+        val currentDate = Date()
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        noteRepository.insertNote(Note(title = "", text = text, date = formatter.format(currentDate), color = 0xFFD1EAED))
     }
 
     suspend fun removeNote(noteId: Int) {
