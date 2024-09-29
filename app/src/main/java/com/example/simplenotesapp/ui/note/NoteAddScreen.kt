@@ -1,6 +1,7 @@
 package com.example.simplenotesapp.ui.note
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,14 +32,28 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController) {
+    var title by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(32.dp)) {
         TextField(
+            value = title,
+            onValueChange = { title = it},
+            label = { Text(stringResource(R.string.title)) },
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.padding(8.dp))
+        TextField(
             value = text,
             onValueChange = { text = it},
-            label = { Text(stringResource(R.string.add_a_note)) },
+            label = { Text("Text") },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -47,9 +62,10 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if(text.isNotEmpty()) {
+                    if(text.isNotEmpty() && title.isNotEmpty()) {
                         coroutineScope.launch {
-                            viewModel.saveNote(text)
+                            viewModel.saveNote(title, text)
+                            title = ""
                             text = ""
                             navController.popBackStack(Screen.Home.route, inclusive = false)
                         }
@@ -61,9 +77,10 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
 
         Button(
             onClick = {
-                if(text.isNotEmpty()) {
+                if(text.isNotEmpty() && title.isNotEmpty()) {
                     coroutineScope.launch {
-                        viewModel.saveNote(text)
+                        viewModel.saveNote(title, text)
+                        title = ""
                         text = ""
                         navController.popBackStack(Screen.Home.route, inclusive = false)
                     }
