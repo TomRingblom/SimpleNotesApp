@@ -1,9 +1,12 @@
 package com.example.simplenotesapp.ui.note
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -19,11 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -102,7 +108,7 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
             ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
                 colors.forEachIndexed { index, color ->
                     DropdownMenuItem(
-                        text = { Text(text = color.second) },
+                        text = { RowWithColorCircleAndText(color = color.first, text = color.second) },
                         onClick = {
                             selectedColor = colors[index].second
                             isExpanded = false
@@ -129,4 +135,25 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
             Text(stringResource(R.string.add_note))
         }
     }
+}
+
+@Composable
+fun RowWithColorCircleAndText(color: Long, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Canvas(modifier = Modifier
+            .size(16.dp)
+        ) {
+            drawCircle(
+                color = Color(color)
+            )
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+        Text(text = text)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ColorCircleTextPreview() {
+    RowWithColorCircleAndText(color = 0xFFFFDADB, text = "Pink")
 }
