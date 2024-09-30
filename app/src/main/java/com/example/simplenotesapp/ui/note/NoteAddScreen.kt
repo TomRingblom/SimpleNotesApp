@@ -2,12 +2,15 @@ package com.example.simplenotesapp.ui.note
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -30,11 +33,19 @@ import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController) {
     var title by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+    val colors = listOf(Pair(0xFFFFDADB, "Pink"), Pair(0xFFD1EAED, "Turquoise"), Pair(0xFFFFD4AA, "Orange"), Pair(0xFFFDF3B4, "Yellow"))
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+    var selectedColor by remember {
+        mutableStateOf(colors[0].second)
+    }
 
     Column(modifier = Modifier.padding(32.dp)) {
         TextField(
@@ -52,7 +63,7 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
         Spacer(modifier = Modifier.padding(8.dp))
         TextField(
             value = text,
-            onValueChange = { text = it},
+            onValueChange = { text = it },
             label = { Text("Text") },
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
@@ -64,7 +75,8 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
                 onDone = {
                     if(text.isNotEmpty() && title.isNotEmpty()) {
                         coroutineScope.launch {
-                            viewModel.saveNote(title, text)
+                            val color = colors.find { it.second == selectedColor }!!.first
+                            viewModel.saveNote(title, text, color)
                             title = ""
                             text = ""
                             navController.popBackStack(Screen.Home.route, inclusive = false)
@@ -74,12 +86,39 @@ fun NoteAddScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelPr
             ),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.padding(8.dp))
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = !isExpanded }
+        ) {
+            TextField(
+                modifier = Modifier.menuAnchor(),
+                value = selectedColor,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) }
+            )
+            
+            ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+                colors.forEachIndexed { index, color ->
+                    DropdownMenuItem(
+                        text = { Text(text = color.second) },
+                        onClick = {
+                            selectedColor = colors[index].second
+                            isExpanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
 
         Button(
             onClick = {
                 if(text.isNotEmpty() && title.isNotEmpty()) {
                     coroutineScope.launch {
-                        viewModel.saveNote(title, text)
+                        val color = colors.find { it.second == selectedColor }!!.first
+                        viewModel.saveNote(title, text, color)
                         title = ""
                         text = ""
                         navController.popBackStack(Screen.Home.route, inclusive = false)

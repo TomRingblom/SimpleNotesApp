@@ -35,10 +35,15 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
             initialValue = NoteUiState()
     )
 
-    suspend fun saveNote(title: String, text: String) {
+    suspend fun saveNote(title: String, text: String, color: Long) {
         val currentDate = Date()
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        noteRepository.insertNote(Note(title = title, text = text, date = formatter.format(currentDate), color = 0xFFD1EAED))
+        noteRepository.insertNote(Note(
+            title = title,
+            text = text,
+            date = formatter.format(currentDate),
+            color = color)
+        )
     }
 
     suspend fun removeNote(noteId: Int) {
