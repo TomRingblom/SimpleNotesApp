@@ -31,7 +31,6 @@ import com.example.simplenotesapp.ui.AppViewModelProvider
 import com.example.simplenotesapp.ui.components.ColorDropDown
 import com.example.simplenotesapp.ui.navigation.NavigationDestination
 import com.example.simplenotesapp.ui.note.NoteEditViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 object NoteEditDestination : NavigationDestination {
@@ -90,8 +89,12 @@ fun NoteEditScreen(
                 onDone = {
                     if(fieldsNotEmpty(viewModel.uiState.note.title, viewModel.uiState.note.text)) {
                         coroutineScope.launch {
-                            saveNoteAndNavigate(coroutineScope, viewModel.uiState.note.title, viewModel.uiState.note.text,
-                                selectedColor, viewModel, navController)
+                            val color = ColorRepository().getColors().find {
+                                it.second == selectedColor
+                            }!!.first
+                            viewModel.updateUiState(viewModel.uiState.note.copy(color = color))
+                            viewModel.editNoteById(viewModel.uiState.note)
+                            navController.popBackStack(Screen.Home.route, inclusive = false)
                         }
                     }
                 }
@@ -104,8 +107,10 @@ fun NoteEditScreen(
             onClick = {
                 if(fieldsNotEmpty(viewModel.uiState.note.title, viewModel.uiState.note.text)) {
                     coroutineScope.launch {
-                        saveNoteAndNavigate(coroutineScope, viewModel.uiState.note.title, viewModel.uiState.note.text,
-                            selectedColor, viewModel, navController)
+                        val color = ColorRepository().getColors().find { it.second == selectedColor }!!.first
+                        viewModel.updateUiState(viewModel.uiState.note.copy(color = color))
+                        viewModel.editNoteById(viewModel.uiState.note)
+                        navController.popBackStack(Screen.Home.route, inclusive = false)
                     }
                 }
             }
@@ -118,35 +123,4 @@ fun NoteEditScreen(
 private fun fieldsNotEmpty(title: String, text: String): Boolean {
     return title.isNotEmpty() && text.isNotEmpty()
 }
-
-fun saveNoteAndNavigate(
-    coroutineScope: CoroutineScope,
-    title: String,
-    text: String,
-    selectedColor: String,
-    viewModel: NoteEditViewModel,
-    navController: NavHostController
-) {
-    coroutineScope.launch {
-        val color = ColorRepository().getColors().find { it.second == selectedColor }!!.first
-        viewModel.saveNote(title, text, color)
-        navController.popBackStack(Screen.Home.route, inclusive = false)
-    }
-}
-
-//private fun saveNote(
-//    viewModel: NoteEditViewModel,
-//    id: Int,
-//    text: String,
-//    navController:
-//    NavHostController,
-//    coroutineScope: CoroutineScope
-//) {
-//    if (text.isNotEmpty()) {
-//        coroutineScope.launch {
-//            viewModel.editNoteById(id, text)
-//            navController.popBackStack(Screen.Home.route, inclusive = false)
-//        }
-//    }
-//}
 
