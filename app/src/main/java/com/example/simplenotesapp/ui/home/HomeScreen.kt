@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.Thin
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -98,29 +99,43 @@ fun NoteItem(
     viewModel: NotesViewModel,
     navController: NavHostController
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
+    Column(modifier = Modifier
         .clip(RoundedCornerShape(8.dp))
         .background(Color(note.color))
-        .padding(16.dp)
+        .padding(8.dp)
         .clickable {
             navController.navigate(route = "${Screen.Edit.name}/${note.id}")
         }
     ) {
-        Text(
-            text = note.text,
-            modifier = Modifier.weight(1f),
-            fontSize = 24.sp
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        Icon(
-            Icons.Filled.Clear,
-            contentDescription = stringResource(R.string.remove),
-            modifier = Modifier
-                .clickable {
+        Row {
+            Text(
+                text = note.title,
+                modifier = Modifier.weight(1f),
+                fontSize = 24.sp,
+                fontWeight = Bold
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            Icon(
+                Icons.Filled.Clear,
+                contentDescription = stringResource(R.string.remove),
+                modifier = Modifier
+                    .clickable {
                     viewModel.noteToDelete = note.id
                     viewModel.updateAlertDialog(true)
-                }
+                    }
+            )
+        }
+        Spacer(modifier = Modifier.padding(1.dp))
+        Text(
+            text = note.text,
+            fontSize = 16.sp,
+            fontWeight = Thin
+        )
+        Spacer(modifier = Modifier.padding(2.dp))
+        Text(
+            text = note.date,
+            fontSize = 8.sp,
+            fontWeight = Bold
         )
     }
 }
@@ -129,9 +144,8 @@ fun NoteItem(
 //@Composable
 //fun NoteItemPreview() {
 //    NoteItem(
-//        note = Note(text = "This is a note"),
-//        navController = NavHostController(LocalContext.current),
-//        0xFFD1EAED
+//        note = Note(title = "Hello", text = "This is a note", color = 0xFFFFDADB, date = "2024-10-04"),
+//        navController = NavHostController(LocalContext.current)
 //    )
 //}
 
