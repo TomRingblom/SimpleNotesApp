@@ -4,19 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Thin
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,13 +63,22 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
         )
         Button(
             onClick = {
-            navController.navigate(Screen.Add.route)
-        },
+                navController.navigate(Screen.Add.route)
+            },
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp)
+                .size(64.dp)
+                .clip(CircleShape)
+                .align(Alignment.BottomCenter),
+            contentPadding = PaddingValues(0.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF212121),
+                contentColor = Color(0xFFCED4DA)
+            )
         ) {
-            Text(text = "Add a note")
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = stringResource(R.string.add_note)
+            )
         }
         when {
             openAlertDialog -> {
@@ -150,6 +165,28 @@ fun NoteItem(
 //        navController = NavHostController(LocalContext.current)
 //    )
 //}
+
+@Preview(showBackground = true)
+@Composable
+fun ButtonPreview() {
+    Button(
+        onClick = {},
+        modifier = Modifier
+            .size(56.dp)
+            .clip(CircleShape),
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF212121),
+            contentColor = Color(0xFFCED4DA)
+        )
+    ) {
+//        Text(text = "Add a note")
+        Icon(
+            Icons.Filled.Add,
+            contentDescription = stringResource(R.string.add_note)
+        )
+    }
+}
 
 @Composable
 fun NoteAlertDialog(viewModel: NotesViewModel) {
