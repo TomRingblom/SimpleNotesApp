@@ -20,8 +20,13 @@ import java.util.Locale
 class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> get() = _notes
+
     private val _openAlertDialog = MutableLiveData(false)
     val openAlertDialog: LiveData<Boolean> = _openAlertDialog
+
+    private val _useGridLayout = MutableLiveData(false)
+    val useGridLayout: LiveData<Boolean> = _useGridLayout
+
     var noteToDelete = 0
 
     companion object {
@@ -66,6 +71,10 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
 
     fun updateAlertDialog(show: Boolean) {
         _openAlertDialog.value = show
+    }
+
+    fun updateGridLayout() {
+        _useGridLayout.value = _useGridLayout.value != true
     }
 }
 

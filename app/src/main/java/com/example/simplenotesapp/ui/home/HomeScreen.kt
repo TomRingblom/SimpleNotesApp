@@ -2,6 +2,7 @@ package com.example.simplenotesapp.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,13 +57,15 @@ import kotlinx.coroutines.launch
 fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
+        val useGridLayout by viewModel.useGridLayout.observeAsState(false)
         val noteUiState by viewModel.noteUiState.collectAsState()
 
         NoteList(
             viewModel = viewModel,
             navController = navController,
             modifier = Modifier.align(Alignment.TopCenter),
-            notes = noteUiState.noteList
+            notes = noteUiState.noteList,
+            useGridLayout = useGridLayout
         )
         Button(
             onClick = {
@@ -80,6 +86,12 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
                 contentDescription = stringResource(R.string.add_note)
             )
         }
+        Button(
+            onClick = { viewModel.updateGridLayout() },
+            modifier = Modifier.align(Alignment.BottomEnd),
+        ) {
+            Text("Grid layout")
+        }
         when {
             openAlertDialog -> {
                 NoteAlertDialog(viewModel)
@@ -93,19 +105,37 @@ fun NoteList(
     viewModel: NotesViewModel,
     navController: NavHostController,
     notes: List<Note>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    useGridLayout: Boolean
 ) {
-    LazyColumn(
-        modifier = modifier
-            .padding(16.dp)
-    ) {
-        items(notes) { note ->
-            NoteItem(
-                note = note,
-                viewModel = viewModel,
-                navController = navController
-            )
-            Spacer(modifier = Modifier.padding(4.dp))
+    if(useGridLayout) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = modifier.padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(notes) { note ->
+                NoteItem(
+                    note = note,
+                    viewModel = viewModel,
+                    navController = navController
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .padding(16.dp)
+        ) {
+            items(notes) { note ->
+                NoteItem(
+                    note = note,
+                    viewModel = viewModel,
+                    navController = navController
+                )
+                Spacer(modifier = Modifier.padding(4.dp))
+            }
         }
     }
 }
@@ -137,8 +167,8 @@ fun NoteItem(
                 contentDescription = stringResource(R.string.remove),
                 modifier = Modifier
                     .clickable {
-                    viewModel.noteToDelete = note.id
-                    viewModel.updateAlertDialog(true)
+                        viewModel.noteToDelete = note.id
+                        viewModel.updateAlertDialog(true)
                     }
             )
         }
