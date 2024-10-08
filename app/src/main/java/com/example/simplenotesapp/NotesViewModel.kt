@@ -8,16 +8,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simplenotesapp.data.Note
 import com.example.simplenotesapp.data.NoteRepository
+import com.example.simplenotesapp.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.Locale
 
-class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
+class NotesViewModel(private val noteRepository: NoteRepository, private val userPreferencesRepository: UserPreferencesRepository) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> get() = _notes
 
@@ -75,6 +77,12 @@ class NotesViewModel(private val noteRepository: NoteRepository) : ViewModel() {
 
     fun updateGridLayout() {
         _useGridLayout.value = _useGridLayout.value != true
+    }
+
+    fun selectLayout(isLinearLayout: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveLayoutPreference(isLinearLayout)
+        }
     }
 }
 

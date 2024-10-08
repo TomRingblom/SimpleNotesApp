@@ -2,6 +2,7 @@ package com.example.simplenotesapp.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
@@ -13,7 +14,8 @@ import com.example.simplenotesapp.ui.note.NoteEditViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            NotesViewModel(inventoryApplication().container.noteRepository)
+            val application = (this[APPLICATION_KEY] as NoteApplication)
+            NotesViewModel(inventoryApplication().container.noteRepository, application.userPreferencesRepository)
         }
         initializer {
             NoteEditViewModel(
