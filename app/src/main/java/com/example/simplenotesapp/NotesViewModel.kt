@@ -16,18 +16,30 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 import java.util.Date
 import java.util.Locale
 
-class NotesViewModel(private val noteRepository: NoteRepository, private val userPreferencesRepository: UserPreferencesRepository) : ViewModel() {
+class NotesViewModel(
+    private val noteRepository: NoteRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> get() = _notes
 
     private val _openAlertDialog = MutableLiveData(false)
     val openAlertDialog: LiveData<Boolean> = _openAlertDialog
 
-    private val _useGridLayout = MutableLiveData(false)
-    val useGridLayout: LiveData<Boolean> = _useGridLayout
+
+    private val _isLinearLayout = MutableStateFlow(false)
+    val isLinearLayout: StateFlow<Boolean> = userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
+        isLinearLayout
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
+
 
     var noteToDelete = 0
 
@@ -75,15 +87,15 @@ class NotesViewModel(private val noteRepository: NoteRepository, private val use
         _openAlertDialog.value = show
     }
 
-    fun updateGridLayout() {
-        _useGridLayout.value = _useGridLayout.value != true
-    }
-
     fun selectLayout(isLinearLayout: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveLayoutPreference(isLinearLayout)
         }
+        _isLinearLayout.value = isLinearLayout
     }
 }
 
-data class NoteUiState(val noteList: List<Note> = listOf())
+data class NoteUiState(
+    val noteList: List<Note> = listOf(),
+    val isLinearLayout: Boolean = false
+)

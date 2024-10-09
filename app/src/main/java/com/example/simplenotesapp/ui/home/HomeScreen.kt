@@ -52,19 +52,20 @@ import com.example.simplenotesapp.navigation.Screen
 import com.example.simplenotesapp.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         val openAlertDialog by viewModel.openAlertDialog.observeAsState(false)
-        val useGridLayout by viewModel.useGridLayout.observeAsState(false)
         val noteUiState by viewModel.noteUiState.collectAsState()
+        val isLinearLayout = viewModel.isLinearLayout.collectAsState(false).value
 
         NoteList(
             viewModel = viewModel,
             navController = navController,
             modifier = Modifier.align(Alignment.TopCenter),
             notes = noteUiState.noteList,
-            useGridLayout = useGridLayout
+            useGridLayout = isLinearLayout
         )
         Button(
             onClick = {
@@ -86,7 +87,9 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
             )
         }
         Button(
-            onClick = { viewModel.updateGridLayout() },
+            onClick = {
+                viewModel.selectLayout(!isLinearLayout)
+            },
             modifier = Modifier.align(Alignment.BottomEnd),
         ) {
             Text("Grid layout")
