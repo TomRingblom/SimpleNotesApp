@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Thin
@@ -60,13 +61,40 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
         val noteUiState by viewModel.noteUiState.collectAsState()
         val isLinearLayout = viewModel.isLinearLayout.collectAsState(false).value
 
-        NoteList(
-            viewModel = viewModel,
-            navController = navController,
-            modifier = Modifier.align(Alignment.TopCenter),
-            notes = noteUiState.noteList,
-            useGridLayout = isLinearLayout
-        )
+        Column(modifier = Modifier.align(Alignment.TopCenter)) {
+            Row {
+                val pink = Color(0xFFff8fab)
+                val grey = Color(0xFFdee2e6)
+                Icon(
+                    painter = painterResource(id = R.drawable.list_icon),
+                    contentDescription = "List View",
+                    tint = if(!isLinearLayout) pink else grey,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clickable {
+                            viewModel.selectLayout(!isLinearLayout)
+                        }
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.grid_view_icon),
+                    contentDescription = "Grid View",
+                    tint = if(isLinearLayout) pink else grey,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clickable {
+                            viewModel.selectLayout(!isLinearLayout)
+                        }
+                )
+            }
+
+            NoteList(
+                viewModel = viewModel,
+                navController = navController,
+                notes = noteUiState.noteList,
+                useGridLayout = isLinearLayout
+            )
+        }
+
         Button(
             onClick = {
                 navController.navigate(Screen.Add.route)
@@ -85,14 +113,6 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
                 Icons.Filled.Add,
                 contentDescription = stringResource(R.string.add_note)
             )
-        }
-        Button(
-            onClick = {
-                viewModel.selectLayout(!isLinearLayout)
-            },
-            modifier = Modifier.align(Alignment.BottomEnd),
-        ) {
-            Text("Grid layout")
         }
         when {
             openAlertDialog -> {
