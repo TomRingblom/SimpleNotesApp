@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -62,7 +63,11 @@ fun HomeScreen(viewModel: NotesViewModel = viewModel(factory = AppViewModelProvi
         val isLinearLayout = viewModel.isLinearLayout.collectAsState(false).value
 
         Column(modifier = Modifier.align(Alignment.TopCenter)) {
-            Row {
+            Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
                 val pink = Color(0xFFff8fab)
                 val grey = Color(0xFFdee2e6)
                 Icon(

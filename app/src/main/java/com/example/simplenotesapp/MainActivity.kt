@@ -88,10 +88,10 @@ fun SimpleNotesApp(navController: NavHostController = rememberNavController()) {
     val viewModel: NoteEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
     Scaffold(
         topBar = {
-            SimpleNotesAppBar(
-//                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null ,
-                navigateUp = { navController.navigateUp() })
+//            SimpleNotesAppBar(
+////                currentScreen = currentScreen,
+//                canNavigateBack = navController.previousBackStackEntry != null ,
+//                navigateUp = { navController.navigateUp() })
         }
     ) { innerPadding ->
         NavHost(
