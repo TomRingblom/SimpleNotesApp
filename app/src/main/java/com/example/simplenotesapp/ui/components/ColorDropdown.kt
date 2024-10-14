@@ -1,16 +1,23 @@
 package com.example.simplenotesapp.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,25 +40,51 @@ fun ColorDropDown(selectedColor: String, onColorSelect: (String) -> Unit) {
 
     ExposedDropdownMenuBox(
         expanded = isExpanded,
-        onExpandedChange = { isExpanded = !isExpanded }
+        onExpandedChange = { isExpanded = !isExpanded },
+        modifier = Modifier
+//            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
     ) {
-        TextField(
-            modifier = Modifier.menuAnchor(),
+        OutlinedTextField(
+            modifier = Modifier
+//                .padding(start = 8.dp, end = 8.dp)
+                .fillMaxWidth()
+                .menuAnchor(),
             value = selectedColor,
             onValueChange = {},
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = Color.Black
+            ),
             readOnly = true,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) }
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            }
         )
 
-        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false },
+            modifier = Modifier
+//                .fillMaxWidth()
+                .background(Color.White)
+        ) {
             colors.forEachIndexed { index, color ->
                 DropdownMenuItem(
-                    text = { RowWithColorCircleAndText(color = color.first, text = color.second) },
+                    text = {
+                        RowWithColorCircleAndText(color = color.first, text = color.second)
+                    },
                     onClick = {
                         onColorSelect(colors[index].second)
                         isExpanded = false
                     },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    modifier = Modifier
+//                        .fillMaxWidth()
+                        .background(Color.White)
                 )
             }
         }
@@ -60,7 +93,9 @@ fun ColorDropDown(selectedColor: String, onColorSelect: (String) -> Unit) {
 
 @Composable
 fun RowWithColorCircleAndText(color: Long, text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Canvas(modifier = Modifier
             .size(16.dp)
         ) {

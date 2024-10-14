@@ -2,13 +2,16 @@ package com.example.simplenotesapp.ui.note
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -45,25 +49,52 @@ fun NoteAddScreen(
         mutableStateOf(colors[0].second)
     }
 
-    Column(modifier = Modifier.padding(32.dp)) {
-        TextField(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 8.dp, end = 8.dp)
+    ) {
+        val colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Black,
+            focusedLabelColor = Color.Black,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            cursorColor = Color.Black
+        )
+        OutlinedTextField(
             value = title,
-            onValueChange = { title = it},
+            onValueChange = { title = it },
             label = { Text(stringResource(R.string.title)) },
             maxLines = 1,
+            colors = colors,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp)
         )
+//        TextField(
+//            value = title,
+//            onValueChange = { title = it},
+//            label = { Text(stringResource(R.string.title)) },
+//            maxLines = 1,
+//            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Text,
+//                capitalization = KeyboardCapitalization.Sentences,
+//                imeAction = ImeAction.Next
+//            ),
+//            modifier = Modifier.fillMaxWidth()
+//        )
         Spacer(modifier = Modifier.padding(8.dp))
-        TextField(
+        OutlinedTextField(
             value = text,
             onValueChange = { text = it },
             label = { Text("Text") },
             maxLines = 1,
+            colors = colors,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences,
@@ -79,8 +110,32 @@ fun NoteAddScreen(
                     }
                 }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp)
         )
+//        TextField(
+//            value = text,
+//            onValueChange = { text = it },
+//            label = { Text("Text") },
+//            maxLines = 1,
+//            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Text,
+//                capitalization = KeyboardCapitalization.Sentences,
+//                imeAction = ImeAction.Done
+//            ),
+//            keyboardActions = KeyboardActions(
+//                onDone = {
+//                    if(fieldsNotEmpty(title, text)) {
+//                        coroutineScope.launch {
+//                            saveNoteAndNavigate(coroutineScope, title, text,
+//                                selectedColor, viewModel, navController)
+//                        }
+//                    }
+//                }
+//            ),
+//            modifier = Modifier.fillMaxWidth()
+//        )
         Spacer(modifier = Modifier.padding(8.dp))
         ColorDropDown(selectedColor = selectedColor, onColorSelect = { selectedColor = it })
         Button(
