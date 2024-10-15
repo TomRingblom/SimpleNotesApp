@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.lang.Thread.State
 import java.util.Date
 import java.util.Locale
 
@@ -24,12 +23,8 @@ class NotesViewModel(
     private val noteRepository: NoteRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-    private val _notes = MutableStateFlow<List<Note>>(emptyList())
-    val notes: StateFlow<List<Note>> get() = _notes
-
     private val _openAlertDialog = MutableLiveData(false)
     val openAlertDialog: LiveData<Boolean> = _openAlertDialog
-
 
     private val _isLinearLayout = MutableStateFlow(false)
     val isLinearLayout: StateFlow<Boolean> = userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
@@ -39,7 +34,6 @@ class NotesViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = false
     )
-
 
     var noteToDelete = 0
 
@@ -71,15 +65,6 @@ class NotesViewModel(
             noteRepository.deleteNote(note)
         } else {
             Log.i("Note not removed!", "Note with id $noteId not found.")
-        }
-    }
-
-    suspend fun editNoteById(id: Int?, text: String) {
-        val note = noteRepository.getNoteStream(id!!).firstOrNull()
-        if (note != null) {
-            noteRepository.updateNote(note.copy(text = text))
-        } else {
-            Log.i("Note not edited!", "Note with id $id not found.")
         }
     }
 

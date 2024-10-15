@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -76,18 +75,7 @@ fun NoteAddScreen(
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp)
         )
-//        TextField(
-//            value = title,
-//            onValueChange = { title = it},
-//            label = { Text(stringResource(R.string.title)) },
-//            maxLines = 1,
-//            keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Text,
-//                capitalization = KeyboardCapitalization.Sentences,
-//                imeAction = ImeAction.Next
-//            ),
-//            modifier = Modifier.fillMaxWidth()
-//        )
+
         Spacer(modifier = Modifier.padding(8.dp))
         OutlinedTextField(
             value = text,
@@ -114,28 +102,7 @@ fun NoteAddScreen(
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp)
         )
-//        TextField(
-//            value = text,
-//            onValueChange = { text = it },
-//            label = { Text("Text") },
-//            maxLines = 1,
-//            keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Text,
-//                capitalization = KeyboardCapitalization.Sentences,
-//                imeAction = ImeAction.Done
-//            ),
-//            keyboardActions = KeyboardActions(
-//                onDone = {
-//                    if(fieldsNotEmpty(title, text)) {
-//                        coroutineScope.launch {
-//                            saveNoteAndNavigate(coroutineScope, title, text,
-//                                selectedColor, viewModel, navController)
-//                        }
-//                    }
-//                }
-//            ),
-//            modifier = Modifier.fillMaxWidth()
-//        )
+
         Spacer(modifier = Modifier.padding(8.dp))
         ColorDropDown(selectedColor = selectedColor, onColorSelect = { selectedColor = it })
         Button(
