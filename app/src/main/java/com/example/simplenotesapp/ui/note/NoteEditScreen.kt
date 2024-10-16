@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -47,7 +49,9 @@ fun NoteEditScreen(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val color = ColorRepository().getColors().find { it.first == viewModel.uiState.note.color }
+    val color = ColorRepository().getColors().find {
+        it.first == viewModel.uiState.note.color
+    }
     var selectedColor by remember {
         mutableStateOf(color?.second ?: "")
     }
@@ -57,13 +61,21 @@ fun NoteEditScreen(
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        TextField(
+        val colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Black,
+            focusedLabelColor = Color.Black,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            cursorColor = Color.Black
+        )
+        OutlinedTextField(
             value = viewModel.uiState.note.title,
             onValueChange = {
                 viewModel.updateUiState(viewModel.uiState.note.copy(title = it))
             },
             label = { Text(stringResource(R.string.edit_note)) },
             maxLines = 1,
+            colors = colors,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences,
@@ -71,15 +83,16 @@ fun NoteEditScreen(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp)
+                .padding(start = 8.dp, end = 8.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = viewModel.uiState.note.text,
             onValueChange = {
                 viewModel.updateUiState(viewModel.uiState.note.copy(text = it))
             },
-            label = { Text("Text") },
+            label = { Text("Edit text") },
             maxLines = 1,
+            colors = colors,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences,
@@ -99,7 +112,9 @@ fun NoteEditScreen(
                     }
                 }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp)
         )
         Spacer(modifier = Modifier.padding(8.dp))
         ColorDropDown(selectedColor = selectedColor, onColorSelect = { selectedColor = it })
