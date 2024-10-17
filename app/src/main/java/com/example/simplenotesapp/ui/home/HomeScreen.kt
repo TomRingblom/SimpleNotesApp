@@ -214,15 +214,6 @@ fun NoteItem(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun NoteItemPreview() {
-//    NoteItem(
-//        note = Note(title = "Hello", text = "This is a note", color = 0xFFFFDADB, date = "2024-10-04"),
-//        navController = NavHostController(LocalContext.current)
-//    )
-//}
-
 @Preview(showBackground = true)
 @Composable
 fun ButtonPreview() {
@@ -237,7 +228,6 @@ fun ButtonPreview() {
             contentColor = Color(0xFFCED4DA)
         )
     ) {
-//        Text(text = "Add a note")
         Icon(
             Icons.Filled.Add,
             contentDescription = stringResource(R.string.add_note)

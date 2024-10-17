@@ -80,7 +80,7 @@ fun NoteAddScreen(
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
-            label = { Text("Text") },
+            label = { Text(stringResource(R.string.text)) },
             maxLines = 1,
             colors = colors,
             keyboardOptions = KeyboardOptions(

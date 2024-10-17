@@ -42,12 +42,10 @@ fun ColorDropDown(selectedColor: String, onColorSelect: (String) -> Unit) {
         expanded = isExpanded,
         onExpandedChange = { isExpanded = !isExpanded },
         modifier = Modifier
-//            .fillMaxWidth()
             .padding(horizontal = 8.dp)
     ) {
         OutlinedTextField(
             modifier = Modifier
-//                .padding(start = 8.dp, end = 8.dp)
                 .fillMaxWidth()
                 .menuAnchor(),
             value = selectedColor,
@@ -69,7 +67,6 @@ fun ColorDropDown(selectedColor: String, onColorSelect: (String) -> Unit) {
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false },
             modifier = Modifier
-//                .fillMaxWidth()
                 .background(Color.White)
         ) {
             colors.forEachIndexed { index, color ->
@@ -83,7 +80,6 @@ fun ColorDropDown(selectedColor: String, onColorSelect: (String) -> Unit) {
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     modifier = Modifier
-//                        .fillMaxWidth()
                         .background(Color.White)
                 )
             }
